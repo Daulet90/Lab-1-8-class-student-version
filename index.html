@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Лабораторная работа №1 — рабочий лист учащегося</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --paper:#fdfcf8;
+    --grid:rgba(47,110,166,0.14);
+    --margin-red:#c65b5b;
+    --ink:#20293a;
+    --ink-soft:#4b5567;
+    --accent:#2f6ea6;
+    --accent-deep:#1e4a73;
+    --result:#fff2b8;
+    --result-border:#d9b23c;
+    --line:#c7cfdb;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{ margin:0; min-height:100%; background:#e9edf1; }
+
+  body{
+    font-family:'PT Serif', Georgia, serif;
+    color:var(--ink);
+    line-height:1.55;
+    padding:32px 16px 64px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .page{
+    position:relative;
+    width:100%;
+    max-width:900px;
+    background:var(--paper);
+    background-image:
+      repeating-linear-gradient(0deg, transparent 0 27px, var(--grid) 27px 28px),
+      repeating-linear-gradient(90deg, transparent 0 27px, var(--grid) 27px 28px);
+    box-shadow:0 1px 3px rgba(20,30,50,0.08), 0 18px 40px -22px rgba(20,30,50,0.35);
+    padding:44px 34px 44px 68px;
+    border-radius:2px;
+  }
+  .page::before{
+    content:""; position:absolute; top:0; bottom:0; left:38px; width:0;
+    border-left:2px solid var(--margin-red); opacity:0.55;
+  }
+
+  header{ text-align:center; margin-bottom:28px; }
+  h1{ font-size:1.5rem; font-weight:700; margin:0 0 6px; letter-spacing:0.01em; }
+  .subtitle{ font-style:italic; font-size:1.06rem; margin:0 0 4px; color:var(--ink-soft); }
+  .course-line{ font-size:0.95rem; color:var(--ink-soft); }
+
+  .id-fields{
+    display:flex; flex-wrap:wrap; gap:10px 24px;
+    margin:26px 0 30px; padding-bottom:14px; border-bottom:1px solid var(--line);
+  }
+  .id-fields label{ font-size:0.94rem; color:var(--ink-soft); display:flex; align-items:baseline; gap:6px; flex:1 1 170px; }
+  .id-fields input{
+    flex:1; border:none; border-bottom:1px dashed var(--ink-soft); background:transparent;
+    font-family:inherit; font-size:0.97rem; color:var(--ink); padding:2px 2px; min-width:60px;
+  }
+  .id-fields input:focus{ outline:none; border-bottom-color:var(--accent); }
+
+  section{ margin:0 0 26px; }
+  h2{ font-size:1.08rem; font-weight:700; margin:0 0 10px; color:var(--accent-deep); }
+  p{ margin:0 0 8px; }
+
+  ul.formulas{ list-style:none; margin:0; padding:0; }
+  ul.formulas li{
+    font-family:'JetBrains Mono', monospace; font-size:0.94rem;
+    background:rgba(47,110,166,0.06); border-left:3px solid var(--accent);
+    padding:7px 12px; margin-bottom:6px; border-radius:0 3px 3px 0;
+  }
+  ul.formulas .gloss{ font-family:'PT Serif', serif; color:var(--ink-soft); font-size:0.86rem; }
+
+  .table-note{
+    font-size:0.88rem; color:var(--ink-soft);
+    background:rgba(47,110,166,0.06); border-left:3px solid var(--accent);
+    padding:8px 12px; margin-bottom:12px; border-radius:0 3px 3px 0;
+  }
+
+  .table-scroll{ overflow-x:auto; }
+  table{ width:100%; min-width:640px; border-collapse:collapse; font-size:0.88rem; background:rgba(255,255,255,0.55); }
+  caption{ text-align:left; font-weight:700; margin-bottom:8px; color:var(--accent-deep); }
+  th, td{ border:1px solid var(--line); padding:7px 8px; text-align:left; vertical-align:middle; }
+  th{ background:rgba(47,110,166,0.09); font-weight:700; font-size:0.82rem; }
+  td.num{ text-align:center; color:var(--ink-soft); width:2.2em; }
+  td.qty{ min-width:180px; }
+  td.qty .sym{ display:block; font-family:'JetBrains Mono', monospace; font-size:0.78rem; color:var(--ink-soft); margin-top:2px; }
+
+  th.col-sample, td.col-sample{ border-left:3px solid var(--accent); background:rgba(47,110,166,0.05); }
+  td.col-sample.computed{ background:var(--result); border-bottom:2px solid var(--result-border) !important; font-family:'JetBrains Mono', monospace; font-weight:600; }
+  td.given{ font-family:'JetBrains Mono', monospace; text-align:center; }
+
+  .blank-input{
+    width:100%; border:none; border-bottom:1px solid var(--ink-soft); background:transparent;
+    font-family:'JetBrains Mono', monospace; font-size:0.9rem; color:var(--ink); padding:3px 2px; text-align:center;
+  }
+  .blank-input:focus{ outline:none; border-bottom:2px solid var(--accent); }
+  .unit-hint{ font-size:0.74rem; color:var(--ink-soft); margin-left:3px; }
+  .computed .unit{ font-weight:400; color:var(--ink-soft); font-size:0.8rem; }
+
+  details.example{ background:rgba(47,110,166,0.05); border:1px solid var(--line); border-radius:4px; padding:2px 14px 10px; }
+  details.example summary{ cursor:pointer; font-weight:700; color:var(--accent-deep); padding:10px 0; }
+  .example-body{ font-family:'JetBrains Mono', monospace; font-size:0.86rem; line-height:1.8; }
+  .example-body .step{ display:block; }
+
+  textarea{
+    width:100%; min-height:90px; font-family:'PT Serif', serif; font-size:0.98rem; color:var(--ink);
+    border:1px solid var(--line); border-radius:3px;
+    background:repeating-linear-gradient(var(--paper) 0 27px, var(--line) 27px 28px);
+    background-attachment:local; padding:6px 10px; resize:vertical;
+  }
+  textarea:focus{ outline:none; border-color:var(--accent); }
+
+  .signoff{ margin-top:28px; display:flex; justify-content:space-between; font-size:0.9rem; color:var(--ink-soft); }
+
+  .toolbar{ max-width:900px; width:100%; display:flex; justify-content:flex-end; gap:10px; margin:0 auto 14px; }
+  .toolbar button{
+    font-family:'PT Serif', serif; font-size:0.88rem; padding:8px 16px; border-radius:4px;
+    border:1px solid var(--accent-deep); background:var(--accent); color:#fff; cursor:pointer;
+  }
+  .toolbar button.ghost{ background:transparent; color:var(--accent-deep); }
+  .toolbar button:hover{ filter:brightness(1.08); }
+
+  @media (max-width:640px){
+    body{ padding:16px 8px 40px; }
+    .toolbar{ flex-wrap:wrap; }
+    .toolbar button{ flex:1 1 140px; font-size:0.82rem; padding:9px 10px; }
+    .page{ padding:26px 14px 30px 30px; }
+    .page::before{ left:14px; }
+    h1{ font-size:1.2rem; }
+    .subtitle{ font-size:0.92rem; }
+    .course-line{ font-size:0.82rem; }
+    .id-fields{ flex-direction:column; gap:10px; }
+    .id-fields label{ flex:1 1 auto; }
+    h2{ font-size:0.98rem; }
+    ul.formulas li{ font-size:0.8rem; padding:6px 9px; }
+    ul.formulas .gloss{ font-size:0.74rem; display:block; margin-top:2px; }
+    caption{ font-size:0.96rem; }
+
+    .table-scroll{ overflow-x:visible; }
+    table{ min-width:0; }
+    table, thead, tbody, tr{ display:block; width:100%; }
+    thead{ display:none; }
+    tbody tr{ border:1px solid var(--line); border-radius:4px; margin-bottom:10px; background:rgba(255,255,255,0.7); overflow:hidden; }
+    td{ display:flex; align-items:center; gap:10px; border:none; border-bottom:1px solid var(--line); padding:7px 10px; font-size:0.85rem; }
+    tr td:last-child{ border-bottom:none; }
+    td.num{ display:none; }
+    td.qty{ display:block; font-weight:700; background:rgba(47,110,166,0.07); min-width:0; }
+    td.qty .sym{ font-weight:400; }
+    td.col-sample{ border-left:none; border-top:3px solid var(--accent); }
+    td:not(.num):not(.qty)::before{ content:attr(data-label); flex:0 0 42%; font-weight:700; font-size:0.72rem; color:var(--accent-deep); }
+    .example-body{ font-size:0.76rem; line-height:1.7; }
+    .signoff{ flex-direction:column; gap:10px; }
+  }
+
+  @media print{
+    body{ background:#fff; padding:0; }
+    .toolbar{ display:none; }
+    .page{ box-shadow:none; max-width:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar" role="toolbar" aria-label="Действия">
+  <button type="button" class="ghost" id="clearBtn">Очистить ответы</button>
+  <button type="button" id="printBtn">Печать / Сохранить в PDF</button>
+</div>
+
+<main class="page">
+  <header>
+    <h1>Лабораторная работа №1</h1>
+    <p class="subtitle">«Сравнение количеств теплоты при смешивании воды разной температуры»</p>
+    <p class="course-line">Физика, 8 класс — рабочий лист учащегося</p>
+  </header>
+
+  <div class="id-fields">
+    <label>Ф.И. учащегося: <input type="text" placeholder="фамилия, имя"></label>
+    <label>Класс: <input type="text" placeholder="8__" style="max-width:60px"></label>
+    <label>Вариант: <input type="text" placeholder="1 или 2" style="max-width:70px"></label>
+    <label>Дата: <input type="text" placeholder="дд.мм.гггг" style="max-width:120px"></label>
+  </div>
+
+  <section>
+    <h2>Цель работы</h2>
+    <p>Сравнить количество теплоты, отданное горячей водой, с количеством теплоты, полученным холодной водой при теплопередаче.</p>
+  </section>
+
+  <section>
+    <h2>Приборы и материалы</h2>
+    <p>Калориметр, мензурка из термостойкого стекла, термометр, сосуд для горячей воды, чайник с горячей водой, сосуд с холодной водой.</p>
+  </section>
+
+  <section>
+    <h2>Расчётные формулы</h2>
+    <ul class="formulas">
+      <li>Q = c·m·|t − t₀| <span class="gloss">— количество теплоты</span></li>
+      <li>Q₁ = Q₂ <span class="gloss">— условие теплового баланса (закон сохранения энергии)</span></li>
+      <li>ΔQ = Q₂ − Q₁ <span class="gloss">— абсолютная разность количеств теплоты</span></li>
+      <li>ε = (ΔQ / Q₂)·100% <span class="gloss">— относительная погрешность</span></li>
+      <li>c = 4200 Дж/(кг·°C) <span class="gloss">— удельная теплоёмкость воды</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="table-note">Столбец «Образец» — уже решённый пример, показывающий порядок расчёта. Найдите свой вариант (1 или 2), перепишите исходные данные в тетрадь и рассчитайте Q₁, Q₂, ΔQ и ε самостоятельно, по образцу.</p>
+    <div class="table-scroll">
+    <table>
+      <caption>Таблица 1. Исходные данные</caption>
+      <thead>
+        <tr><th>№</th><th>Величина</th><th class="col-sample">Образец<br>(решено)</th><th>Вариант 1</th><th>Вариант 2</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="num">1</td><td class="qty">Масса холодной воды<span class="sym">m₁, кг</span></td>
+          <td class="col-sample given" data-label="Образец">0,20</td>
+          <td class="given" data-label="Вариант 1">0,10</td>
+          <td class="given" data-label="Вариант 2">0,15</td></tr>
+        <tr><td class="num">2</td><td class="qty">Начальная температура холодной воды<span class="sym">t₁, °C</span></td>
+          <td class="col-sample given" data-label="Образец">15</td>
+          <td class="given" data-label="Вариант 1">10</td>
+          <td class="given" data-label="Вариант 2">9</td></tr>
+        <tr><td class="num">3</td><td class="qty">Масса горячей воды<span class="sym">m₂, кг</span></td>
+          <td class="col-sample given" data-label="Образец">0,15</td>
+          <td class="given" data-label="Вариант 1">0,10</td>
+          <td class="given" data-label="Вариант 2">0,12</td></tr>
+        <tr><td class="num">4</td><td class="qty">Начальная температура горячей воды<span class="sym">t₂, °C</span></td>
+          <td class="col-sample given" data-label="Образец">80</td>
+          <td class="given" data-label="Вариант 1">60</td>
+          <td class="given" data-label="Вариант 2">68</td></tr>
+        <tr><td class="num">5</td><td class="qty">Температура смеси (измерена термометром)<span class="sym">t, °C</span></td>
+          <td class="col-sample given" data-label="Образец">40</td>
+          <td class="given" data-label="Вариант 1">33</td>
+          <td class="given" data-label="Вариант 2">33</td></tr>
+        <tr><td class="num">6</td><td class="qty">Удельная теплоёмкость воды<span class="sym">c, Дж/(кг·°C)</span></td>
+          <td class="col-sample given" data-label="Образец">4200</td>
+          <td class="given" data-label="Вариант 1">4200</td>
+          <td class="given" data-label="Вариант 2">4200</td></tr>
+        <tr><td class="num">7</td><td class="qty">Количество теплоты, полученное холодной водой<span class="sym">Q₁, Дж</span></td>
+          <td class="col-sample computed" data-label="Образец">21 000 <span class="unit">Дж</span></td>
+          <td data-label="Вариант 1"><input class="blank-input" type="text" inputmode="decimal" aria-label="Q1, вариант 1"><span class="unit-hint">Дж</span></td>
+          <td data-label="Вариант 2"><input class="blank-input" type="text" inputmode="decimal" aria-label="Q1, вариант 2"><span class="unit-hint">Дж</span></td></tr>
+        <tr><td class="num">8</td><td class="qty">Количество теплоты, отданное горячей водой<span class="sym">Q₂, Дж</span></td>
+          <td class="col-sample computed" data-label="Образец">25 200 <span class="unit">Дж</span></td>
+          <td data-label="Вариант 1"><input class="blank-input" type="text" inputmode="decimal" aria-label="Q2, вариант 1"><span class="unit-hint">Дж</span></td>
+          <td data-label="Вариант 2"><input class="blank-input" type="text" inputmode="decimal" aria-label="Q2, вариант 2"><span class="unit-hint">Дж</span></td></tr>
+        <tr><td class="num">9</td><td class="qty">Абсолютная разность количеств теплоты<span class="sym">ΔQ, Дж</span></td>
+          <td class="col-sample computed" data-label="Образец">4 200 <span class="unit">Дж</span></td>
+          <td data-label="Вариант 1"><input class="blank-input" type="text" inputmode="decimal" aria-label="дельта Q, вариант 1"><span class="unit-hint">Дж</span></td>
+          <td data-label="Вариант 2"><input class="blank-input" type="text" inputmode="decimal" aria-label="дельта Q, вариант 2"><span class="unit-hint">Дж</span></td></tr>
+        <tr><td class="num">10</td><td class="qty">Относительная погрешность<span class="sym">ε, %</span></td>
+          <td class="col-sample computed" data-label="Образец">16,7 <span class="unit">%</span></td>
+          <td data-label="Вариант 1"><input class="blank-input" type="text" inputmode="decimal" aria-label="эпсилон, вариант 1"><span class="unit-hint">%</span></td>
+          <td data-label="Вариант 2"><input class="blank-input" type="text" inputmode="decimal" aria-label="эпсилон, вариант 2"><span class="unit-hint">%</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section>
+    <details class="example">
+      <summary>Как оформить решение (по данным столбца «Образец»)</summary>
+      <div class="example-body">
+        <span class="step">Дано: m₁ = 0,20 кг, t₁ = 15 °C, m₂ = 0,15 кг, t₂ = 80 °C, t = 40 °C, c = 4200 Дж/(кг·°C)</span>
+        <span class="step">Q₁ = c·m₁·(t − t₁) = 4200 · 0,20 · (40 − 15) = 4200 · 0,20 · 25 = 21000 Дж</span>
+        <span class="step">Q₂ = c·m₂·(t₂ − t) = 4200 · 0,15 · (80 − 40) = 4200 · 0,15 · 40 = 25200 Дж</span>
+        <span class="step">ΔQ = Q₂ − Q₁ = 25200 − 21000 = 4200 Дж</span>
+        <span class="step">ε = (ΔQ / Q₂) · 100% = (4200 / 25200) · 100% ≈ 16,7%</span>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2>Вывод</h2>
+    <textarea id="conclusion" placeholder="Запишите вывод по результатам работы: сравните Q₁ и Q₂ для своего варианта, объясните причину расхождения (потери теплоты на нагрев калориметра, теплообмен с воздухом)…"></textarea>
+  </section>
+
+  <div class="signoff">
+    <span>Подпись учителя: _______________</span>
+  </div>
+</main>
+
+<script>
+(() => {
+  document.getElementById('printBtn')?.addEventListener('click', () => window.print());
+  document.getElementById('clearBtn')?.addEventListener('click', () => {
+    document.querySelectorAll('.blank-input').forEach((i) => (i.value = ''));
+  });
+})();
+</script>
+
+</body>
+</html>
